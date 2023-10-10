@@ -1,0 +1,42 @@
+name: Run IP update script
+
+on:
+  workflow_dispatch:  # 添加这行使得这个 action 可以手动触发
+  push:
+    branches: 
+      - master  # 当有push事件发生到master分支时执行
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest  # 选择运行此工作流的Github Actions虚拟环境
+
+    steps:
+    # 检出仓库
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # 设置Python环境
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    # 安装依赖
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+
+    # 运行主要脚本
+    - name: Execute script
+      run: python main.py
+
+    # 将合并的IP地址文件提交回仓库
+    - name: Commit and push
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "Add merged IP addresses" -a
+        git push
