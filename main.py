@@ -15,7 +15,7 @@ with zipfile.ZipFile("master.zip", 'r') as zip_ref:
 
 # 将结果存储在这个列表中
 ip_addresses = []
-excluded_asns = ['209242', '13335', '149648']
+excluded_asns = ['209242', '13335', '149648', '132892', '139242', '202623', '203898']
 
 # 遍历as文件夹
 for root, dirs, files in os.walk("asn-ip-master/as"):
