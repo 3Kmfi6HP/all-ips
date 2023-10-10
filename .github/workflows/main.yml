@@ -1,8 +1,8 @@
-name: Download and Commit
+name: Download IP and Commit
 
 on:
   schedule:
-    - cron: '5 */3 * * *'
+    - cron: '5 * */5 * *'
   workflow_dispatch:  # 允许手动触发
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
 
     - name: Install requests library
       run: |
-        pip install requests feedparser
+        pip install requests
 
     - name: Download File
       run: python main.py  # 这里 main.py 负责下载文件
