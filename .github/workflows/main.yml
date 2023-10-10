@@ -1,42 +1,35 @@
-name: Run IP update script
+name: Download and Commit
 
 on:
-  workflow_dispatch:  # 添加这行使得这个 action 可以手动触发
-  push:
-    branches: 
-      - master  # 当有push事件发生到master分支时执行
+  schedule:
+    - cron: '5 */3 * * *'
+  workflow_dispatch:  # 允许手动触发
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest  # 选择运行此工作流的Github Actions虚拟环境
+  download-and-commit:
+    runs-on: ubuntu-latest
 
     steps:
-    # 检出仓库
-    - name: Checkout code
+    - name: Checkout Repository
       uses: actions/checkout@v2
 
-    # 设置Python环境
-    - name: Set up Python 3.8
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: '3.x'  # 选择 Python 版本
 
-    # 安装依赖
-    - name: Install dependencies
+    - name: Install requests library
       run: |
-        python -m pip install --upgrade pip
-        pip install requests
+        pip install requests feedparser
 
-    # 运行主要脚本
-    - name: Execute script
-      run: python main.py
+    - name: Download File
+      run: python main.py  # 这里 main.py 负责下载文件
 
-    # 将合并的IP地址文件提交回仓库
-    - name: Commit and push
+    - name: Commit and Push
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add .
-        git commit -m "Add merged IP addresses" -a
+        git commit -m "Downloaded file on $(date "+%Y/%m/%d %H:%M:%S")"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{github.repository}}.git
         git push
